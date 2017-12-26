@@ -15,12 +15,12 @@ class LaravelPayUServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/config/payu.php' => config_path('payu.php'),
-            __DIR__ . '/model/Order.php' => app_path('Order.php'),
+            __DIR__.'/config/payu.php' => config_path('payu.php'),
+            __DIR__.'/model/Order.php' => app_path('Order.php'),
         ]);
 
         $this->mergeConfigFrom(
-            __DIR__ . '/config/payu.php', 'payu'
+            __DIR__.'/config/payu.php', 'payu'
         );
     }
 

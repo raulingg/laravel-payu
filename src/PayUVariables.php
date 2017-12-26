@@ -17,7 +17,7 @@ class PayUVariables
             'MASTERCARD',
             'DINERS',
             'CODENSA',
-            'ELO'
+            'ELO',
         ];
     }
 }

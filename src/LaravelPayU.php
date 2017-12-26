@@ -273,7 +273,7 @@ class LaravelPayU
     }
 
     /**
-     * Set the Account testing state (never use on production)
+     * Set the Account testing state (never use on production).
      *
      * @return string
      */
@@ -289,7 +289,7 @@ class LaravelPayU
      */
     private static function isAccountInTesting()
     {
-        if (!is_null(static::$isTesting)) {
+        if (! is_null(static::$isTesting)) {
             return static::$isTesting;
         }
 
@@ -374,23 +374,23 @@ class LaravelPayU
 
         if (static::isAppInTesting() == 'local') {
             \Environment::setPaymentsCustomUrl(
-                "https://sandbox.api.payulatam.com/payments-api/4.0/service.cgi"
+                'https://sandbox.api.payulatam.com/payments-api/4.0/service.cgi'
             );
             \Environment::setReportsCustomUrl(
-                "https://sandbox.api.payulatam.com/reports-api/4.0/service.cgi"
+                'https://sandbox.api.payulatam.com/reports-api/4.0/service.cgi'
             );
             \Environment::setSubscriptionsCustomUrl(
-                "https://sandbox.api.payulatam.com/payments-api/rest/v4.3/"
+                'https://sandbox.api.payulatam.com/payments-api/rest/v4.3/'
             );
         } else {
             \Environment::setPaymentsCustomUrl(
-                "https://api.payulatam.com/payments-api/4.0/service.cgi"
+                'https://api.payulatam.com/payments-api/4.0/service.cgi'
             );
             \Environment::setReportsCustomUrl(
-                "https://api.payulatam.com/reports-api/4.0/service.cgi"
+                'https://api.payulatam.com/reports-api/4.0/service.cgi'
             );
             \Environment::setSubscriptionsCustomUrl(
-                "https://api.payulatam.com/payments-api/rest/v4.3/"
+                'https://api.payulatam.com/payments-api/rest/v4.3/'
             );
         }
     }

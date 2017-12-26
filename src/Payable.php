@@ -3,7 +3,6 @@
 namespace Alexo\LaravelPayU;
 
 use InvalidArgumentException;
-use Alexo\LaravelPayU\LaravelPayU;
 
 trait Payable
 {
@@ -14,9 +13,8 @@ trait Payable
      * @param  callback  $onSuccess
      * @param  callback  $onError
      * @return mixed
-     *
      */
-    public function payWith(array $params = [], $onSuccess, $onError)
+    public function payWith(array $params, $onSuccess, $onError)
     {
         LaravelPayU::setPayUEnvironment();
 
@@ -26,7 +24,7 @@ trait Payable
 
             if (array_key_exists(\PayUParameters::PAYMENT_METHOD, $params)) {
                 if ($params[\PayUParameters::PAYMENT_METHOD] == 'PSE') {
-                    if (!array_key_exists(\PayUParameters::RESPONSE_URL, $params)) {
+                    if (! array_key_exists(\PayUParameters::RESPONSE_URL, $params)) {
                         $params[\PayUParameters::RESPONSE_URL] = LaravelPayU::getRedirectPSE();
                     }
                 }
@@ -51,9 +49,8 @@ trait Payable
      * @param  callback  $onSuccess
      * @param  callback  $onError
      * @return mixed
-     *
      */
-    public function authorizeWith(array $params = [], $onSuccess, $onError)
+    public function authorizeWith(array $params, $onSuccess, $onError)
     {
         LaravelPayU::setPayUEnvironment();
 
@@ -80,9 +77,8 @@ trait Payable
      * @param  callback  $onSuccess
      * @param  callback  $onError
      * @return mixed
-     *
      */
-    public function captureWith(array $params = [], $onSuccess, $onError)
+    public function captureWith(array $params, $onSuccess, $onError)
     {
         LaravelPayU::setPayUEnvironment();
 

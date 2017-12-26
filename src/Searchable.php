@@ -2,8 +2,6 @@
 
 namespace Alexo\LaravelPayU;
 
-use Exception;
-
 trait Searchable
 {
     /**
@@ -12,7 +10,6 @@ trait Searchable
      * @param  callback  $onSuccess
      * @param  callback  $onError
      * @return mixed
-     *
      */
     public function searchById($onSuccess, $onError)
     {
@@ -39,7 +36,6 @@ trait Searchable
      * @param  callback  $onSuccess
      * @param  callback  $onError
      * @return mixed
-     *
      */
     public function searchByReference($onSuccess, $onError)
     {
@@ -66,7 +62,6 @@ trait Searchable
      * @param  callback  $onSuccess
      * @param  callback  $onError
      * @return mixed
-     *
      */
     public function searchByTransaction($onSuccess, $onError)
     {
