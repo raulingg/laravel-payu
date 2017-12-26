@@ -9,13 +9,13 @@ Este proyecto hace uso del [sdk de Payu](http://developers.payulatam.com/es/sdk/
 Instalar el paquete mediante composer:
 
 ```bash
-composer require alexo/laravel-payu
+composer require Raulingg/laravel-payu
 ```
 
 Luego incluir el ServiceProvider en el arreglo de providers en *config/app.php*
 
 ```bash
-Alexo\LaravelPayU\LaravelPayUServiceProvider::class,
+Raulingg\LaravelPayU\LaravelPayUServiceProvider::class,
 ```
 
 Publicar la configuración para incluir la informacion de la cuenta de PayU:
@@ -61,7 +61,7 @@ designado:
 
 namespace App\Http\Controllers;
 
-use Alexo\LaravelPayU\LaravelPayU;
+use Raulingg\LaravelPayU\LaravelPayU;
 
 class PaymentsController extends Controller
 {
@@ -82,7 +82,7 @@ y una de error:
 
 namespace App\Http\Controllers;
 
-use Alexo\LaravelPayU\LaravelPayU;
+use Raulingg\LaravelPayU\LaravelPayU;
 
 class PaymentsController extends Controller
 {
@@ -107,7 +107,7 @@ En el modelo de las ordenes, en este caso Order.php debe incluir:
 
 namespace App;
 
-use Alexo\LaravelPayU\Payable;
+use Raulingg\LaravelPayU\Payable;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
@@ -184,8 +184,8 @@ Para las consultas se agrega el trait Searchable en el modelo de la orden asi:
 
 namespace App;
 
-use Alexo\LaravelPayU\Payable;
-use Alexo\LaravelPayU\Searchable;
+use Raulingg\LaravelPayU\Payable;
+use Raulingg\LaravelPayU\Searchable;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model

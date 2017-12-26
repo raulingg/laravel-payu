@@ -2,8 +2,8 @@
 
 namespace Fakes;
 
-use Alexo\LaravelPayU\Payable;
-use Alexo\LaravelPayU\Searchable;
+use Raulingg\LaravelPayU\Payable;
+use Raulingg\LaravelPayU\Searchable;
 
 class Order extends FakeObject
 {

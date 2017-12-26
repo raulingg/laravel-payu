@@ -1,10 +1,7 @@
 <?php
 
-namespace Alexo\LaravelPayU;
-
-use Exception;
+namespace Raulingg\LaravelPayU;
 
 trait Refundable
 {
-
 }

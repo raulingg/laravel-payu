@@ -1,12 +1,12 @@
 {
-  "name": "alexo/laravel-payu",
-  "description": "Una interfaz fluida para Laravel usando el SDK oficial de PayU latam.",
-  "keywords": ["laravel", "payu", "pagos"],
+  "name": "Raulingg/laravel-payu",
+  "description": "Una interfaz fluida para Laravel usando el SDK oficial de PayU Perú.",
+  "keywords": ["laravel", "payu", "pagos", "payu peru", "payu latam"],
   "license": "MIT",
   "authors": [
     {
-      "name": "Alejandro Gutiérrez",
-      "email": "alejandrogutierrezacosta@gmail.com"
+      "name": "Raul Quispe",
+      "email": "relaxedchild@gmail.com"
     }
   ],
   "require": {
@@ -24,7 +24,7 @@
       "sdk/lib"
     ],
     "psr-4": {
-      "Alexo\\LaravelPayU\\": "src/"
+      "Raulingg\\LaravelPayU\\": "src/"
     }
   }
 }

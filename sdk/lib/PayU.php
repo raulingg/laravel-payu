@@ -42,65 +42,52 @@ require_once dirname(__FILE__).'/PayU/PayUCreditCards.php';
 require_once dirname(__FILE__).'/PayU/PayURecurringBill.php';
 require_once dirname(__FILE__).'/PayU/PayURecurringBillItem.php';
 
-
-
-
-
-
-
 /**
+ * Holds basic request information.
  *
- * Holds basic request information
- * 
  * @author PayU Latam
  * @since 1.0.0
  * @version 1.0.0, 20/10/2013
- *
  */
-abstract class PayU {
-	
-	/**
-	 * Api version
-	 */
-	const  API_VERSION = "4.0.1";
+abstract class PayU
+{
+    /**
+     * Api version.
+     */
+    const  API_VERSION = '4.0.1';
 
-	/**
-	 * Api name
-	 */
-	const  API_NAME = "PayU SDK";
-	
-	
-	const API_CODE_NAME = "PAYU_SDK";
+    /**
+     * Api name.
+     */
+    const  API_NAME = 'PayU SDK';
 
-	/**
-	 * The method invocation is for testing purposes
-	 */
-	public static $isTest = false;
+    const API_CODE_NAME = 'PAYU_SDK';
 
-	/**
-	 * The merchant API key
-	 */
-	public static  $apiKey = null;
+    /**
+     * The method invocation is for testing purposes.
+     */
+    public static $isTest = false;
 
-	/**
-	 * The merchant API Login
-	 */
-	public static  $apiLogin = null;
+    /**
+     * The merchant API key.
+     */
+    public static $apiKey = null;
 
-	/**
-	 * The merchant Id
-	 */
-	public static  $merchantId = null;
+    /**
+     * The merchant API Login.
+     */
+    public static $apiLogin = null;
 
-	/**
-	 * The request language
-	 */
-	public static $language = SupportedLanguages::ES;
-	
+    /**
+     * The merchant Id.
+     */
+    public static $merchantId = null;
 
+    /**
+     * The request language.
+     */
+    public static $language = SupportedLanguages::ES;
 }
 
-
-/** validates Environment before begin any operation */
-	Environment::validate();
-
+/* validates Environment before begin any operation */
+    Environment::validate();

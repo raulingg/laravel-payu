@@ -1,6 +1,6 @@
 <?php
 
-namespace Alexo\LaravelPayU;
+namespace Raulingg\LaravelPayU;
 
 class PayUVariables
 {
@@ -17,7 +17,7 @@ class PayUVariables
             'MASTERCARD',
             'DINERS',
             'CODENSA',
-            'ELO'
+            'ELO',
         ];
     }
 }

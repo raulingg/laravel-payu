@@ -1,6 +1,6 @@
 <?php
 
-namespace Alexo\LaravelPayU;
+namespace Raulingg\LaravelPayU;
 
 use Illuminate\Support\Facades\Config;
 use Illuminate\Support\ServiceProvider;
@@ -15,12 +15,16 @@ class LaravelPayUServiceProvider extends ServiceProvider
     public function boot()
     {
         $this->publishes([
-            __DIR__ . '/config/payu.php' => config_path('payu.php'),
-            __DIR__ . '/model/Order.php' => app_path('Order.php'),
+<<<<<<< HEAD
+            __DIR__ . '/config/payu.php' => config_path('payu.php')
+=======
+            __DIR__.'/config/payu.php' => config_path('payu.php'),
+            __DIR__.'/model/Order.php' => app_path('Order.php'),
+>>>>>>> 5e0f71e... Apply fixes from StyleCI (#1)
         ]);
 
         $this->mergeConfigFrom(
-            __DIR__ . '/config/payu.php', 'payu'
+            __DIR__.'/config/payu.php', 'payu'
         );
     }
 

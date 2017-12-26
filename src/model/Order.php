@@ -2,7 +2,7 @@
 
 namespace App;
 
-use Alexo\LaravelPayU\Payable;
+use Raulingg\LaravelPayU\Payable;
 use Illuminate\Database\Eloquent\Model;
 
 class Order extends Model
@@ -15,6 +15,6 @@ class Order extends Model
      * @var array
      */
     protected $fillable = [
-        'reference', 'state', 'value', 'user_id'
+        'reference', 'state', 'value', 'user_id',
     ];
 }
