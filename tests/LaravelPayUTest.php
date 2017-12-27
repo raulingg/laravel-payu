@@ -1,9 +1,9 @@
 <?php
 
-use Raulingg\LaravelPayU\LaravelPayU;
-use Carbon\Carbon;
-use Fakes\Order;
 use Fakes\User;
+use Fakes\Order;
+use Carbon\Carbon;
+use Raulingg\LaravelPayU\LaravelPayU;
 
 class LaravelPayUTest extends PHPUnit_Framework_TestCase
 {
@@ -12,7 +12,7 @@ class LaravelPayUTest extends PHPUnit_Framework_TestCase
     public static function setUpBeforeClass()
     {
         if (file_exists(__DIR__.'/../.env.TMPL')) {
-            $dotenv = new Dotenv\Dotenv(__DIR__.'/../');
+            $dotenv = new Dotenv\Dotenv(__DIR__.'/../', '.env.TMPL');
             $dotenv->load();
         }
 
