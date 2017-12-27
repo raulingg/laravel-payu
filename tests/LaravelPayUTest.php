@@ -11,7 +11,7 @@ class LaravelPayUTest extends PHPUnit_Framework_TestCase
 
     public static function setUpBeforeClass()
     {
-        if (file_exists(__DIR__.'/../.env')) {
+        if (file_exists(__DIR__.'/../.env.TMPL')) {
             $dotenv = new Dotenv\Dotenv(__DIR__.'/../');
             $dotenv->load();
         }

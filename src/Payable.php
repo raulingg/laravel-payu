@@ -3,10 +3,6 @@
 namespace Raulingg\LaravelPayU;
 
 use InvalidArgumentException;
-<<<<<<< HEAD
-use Raulingg\LaravelPayU\LaravelPayU;
-=======
->>>>>>> 5e0f71e... Apply fixes from StyleCI (#1)
 
 trait Payable
 {
