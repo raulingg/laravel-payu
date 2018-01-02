@@ -84,7 +84,7 @@ class PayuClientServiceProviderTest extends BaseTestCase
     {
         $this->serviceProvider->boot();
 
-        $this->assertContains(PayuClientServiceProvider::class, PayuClientServiceProvider::publishableProviders());
+        $this->assertContains(PayuClientServiceProvider::class, array_keys(PayuClientServiceProvider::$publishes));
         $this->assertContains(
             'config' . DIRECTORY_SEPARATOR . PayuClientServiceProvider::CONFIG_FILE_NAME_PAYU . '.php',
             array_values(PayuClientServiceProvider::pathsToPublish(
