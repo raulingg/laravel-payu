@@ -2,13 +2,12 @@
 
 namespace Raulingg\LaravelPayU\Providers;
 
-use Illuminate\Contracts\Config\Repository;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Contracts\Config\Repository;
 use Raulingg\LaravelPayU\Client\PayuClient;
 
 class PayuClientServiceProvider extends ServiceProvider
 {
-
     const CONFIG_FILE_NAME_PAYU = 'payu';
 
     /**
@@ -42,7 +41,7 @@ class PayuClientServiceProvider extends ServiceProvider
      */
     protected function registerPublishConfig()
     {
-        $publishPath = $this->app['path.config']  . DIRECTORY_SEPARATOR . static::CONFIG_FILE_NAME_PAYU . '.php';
+        $publishPath = $this->app['path.config'].DIRECTORY_SEPARATOR.static::CONFIG_FILE_NAME_PAYU.'.php';
         $this->publishes([$this->getConfigPath() => $publishPath]);
     }
 
@@ -59,13 +58,13 @@ class PayuClientServiceProvider extends ServiceProvider
     }
 
     /**
-     *
      * @return \Closure
      */
     protected function getCreatePayuClientClosure()
     {
         return function () {
             $settings = $this->getSettings();
+
             return new PayuClient($settings);
         };
     }
@@ -75,8 +74,9 @@ class PayuClientServiceProvider extends ServiceProvider
      */
     protected function getConfigPath()
     {
-        $root = __DIR__ . DIRECTORY_SEPARATOR . '..' . DIRECTORY_SEPARATOR;
-        $path = $root . 'config' . DIRECTORY_SEPARATOR . static::CONFIG_FILE_NAME_PAYU . '.php';
+        $root = __DIR__.DIRECTORY_SEPARATOR.'..'.DIRECTORY_SEPARATOR;
+        $path = $root.'config'.DIRECTORY_SEPARATOR.static::CONFIG_FILE_NAME_PAYU.'.php';
+
         return $path;
     }
 
@@ -99,6 +99,7 @@ class PayuClientServiceProvider extends ServiceProvider
     {
         /** @var Repository $config */
         $config = $this->app->make('config');
+
         return $config;
     }
 
@@ -110,6 +111,7 @@ class PayuClientServiceProvider extends ServiceProvider
         $path = $this->getConfigPath();
         /** @noinspection PhpIncludeInspection */
         $base = require $path;
+
         return $base;
     }
 }
