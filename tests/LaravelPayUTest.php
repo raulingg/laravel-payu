@@ -13,6 +13,7 @@ use Raulingg\LaravelPayU\Tests\Fakes\Order;
 use Raulingg\LaravelPayU\Client\PayuClient;
 use Raulingg\LaravelPayU\Tests\Fakes\CreditCard;
 use Raulingg\LaravelPayU\Contracts\PayuClientInterface;
+use Illuminate\Support\Facades\Request;
 
 class LaravelPayUTest extends TestCase
 {
@@ -71,9 +72,7 @@ class LaravelPayUTest extends TestCase
 
     public function testCreditCardPayment()
     {
-        $session = md5('myecommercewebsite.com');
         $creditCard = $this->getCreditCard();
-
         $data = [
             PayUParameters::VALUE => $this->order->value,
             PayUParameters::DESCRIPTION => 'Payment cc test',
@@ -92,7 +91,7 @@ class LaravelPayUTest extends TestCase
             PayUParameters::PAYER_NAME => $creditCard->name,
             PayUParameters::PAYER_DNI => $this->faker->randomNumber(8),
 
-            PayUParameters::DEVICE_SESSION_ID => session_id($session),
+            PayUParameters::DEVICE_SESSION_ID => session_id(),
             PayUParameters::IP_ADDRESS => '127.0.0.1',
             PayUParameters::USER_AGENT => $this->faker->userAgent
         ];
