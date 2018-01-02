@@ -1,10 +1,10 @@
 <?php
 
 return [
-    'payu_testing' => env('PAYU_TESTING_ENV', true),
-    'payu_merchant_id' => env('PAYU_MERCHANT_ID', ''),
-    'payu_api_login' => env('PAYU_API_LOGIN', ''),
-    'payu_api_key' => env('PAYU_API_KEY', ''),
-    'payu_account_id' => env('PAYU_ACCOUNT_ID', ''),
-    'payu_country' => env('PAYU_COUNTRY', 'PE'),
+    'merchantId' => env('PAYU_MERCHANT_ID', ''),
+    'apiLogin' => env('PAYU_API_LOGIN', ''),
+    'apiKey' => env('PAYU_API_KEY', ''),
+    'accountId' => env('PAYU_ACCOUNT_ID', ''),
+    'country' => env('PAYU_COUNTRY', 'PE'),
+    'isTest' => env('PAYU_ON_TESTING', true)
 ];

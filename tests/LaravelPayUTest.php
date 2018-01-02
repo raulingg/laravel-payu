@@ -1,74 +1,116 @@
 <?php
+namespace Raulingg\LaravelPayU\Tests;
 
-use Fakes\User;
-use Fakes\Order;
+use PayU;
+use PayUPayments;
 use Carbon\Carbon;
-use Raulingg\LaravelPayU\LaravelPayU;
+use PayUCountries;
+use PayUParameters;
+use PHPUnit\Framework\TestCase;
+use Faker\Factory as FakerFactory;
+use Raulingg\LaravelPayU\Tests\Fakes\User;
+use Raulingg\LaravelPayU\Tests\Fakes\Order;
+use Raulingg\LaravelPayU\Client\PayuClient;
+use Raulingg\LaravelPayU\Tests\Fakes\CreditCard;
+use Raulingg\LaravelPayU\Contracts\PayuClientInterface;
 
-class LaravelPayUTest extends PHPUnit_Framework_TestCase
+class LaravelPayUTest extends TestCase
 {
-    protected $approvedOrder;
+    /**
+     *
+     * @var Order
+     */
+    protected $order;
 
-    public static function setUpBeforeClass()
+    /**
+     *
+     * @var User
+     */
+    protected $user;
+
+    /**
+     *
+     * @var Faker\Generator;
+     */
+    protected $faker;
+
+    /**
+     *
+     * @var PayuClientInterface
+     */
+    protected $payuClient;
+
+    public function setUp()
     {
-        if (file_exists(__DIR__.'/../.env.TMPL')) {
-            $dotenv = new Dotenv\Dotenv(__DIR__.'/../', '.env.TMPL');
-            $dotenv->load();
-        }
+        parent::setUp();
 
-        date_default_timezone_set('America/Lima');
+        $this->faker = FakerFactory::create();
+        $this->order = $this->getOrder();
+        $this->user = $this->getUser();
+
+        $settings = [
+            PayuClient::API_KEY => '4Vj8eK4rloUd272L48hsrarnUA',
+            PayuClient::API_LOGIN => 'pRRXKOl8ikMmt9u',
+            PayuClient::MERCHANT_ID => '508029',
+            PayuClient::ON_TESTING => true,
+            PayUParameters::ACCOUNT_ID => 512323,
+            PayUParameters::COUNTRY => 'PE'
+        ];
+        $this->payuClient = new PayuClient($settings);
+    }
+
+
+    public function testDoPing()
+    {
+        $response = $this->payuClient->doPing(function($response) {
+            $this->assertAttributeEquals('SUCCESS', 'code', $response);
+        }, function($error) {
+            $this->assertTrue(false, $error->getCode() . ' - ' . $error->getMessage());
+        });
     }
 
     public function testCreditCardPayment()
     {
-        $this->markTestSkipped('must be revisited.');
-
-        $user = $this->getUser();
-        $order = $this->getOrder();
-
         $session = md5('myecommercewebsite.com');
+        $creditCard = $this->getCreditCard();
+
         $data = [
-            \PayUParameters::DESCRIPTION => 'Payment cc test',
-            \PayUParameters::IP_ADDRESS => '127.0.0.1',
-            \PayUParameters::CURRENCY => 'PEN',
-            \PayUParameters::CREDIT_CARD_NUMBER => '378282246310005',
-            \PayUParameters::CREDIT_CARD_EXPIRATION_DATE => '2017/02',
-            \PayUParameters::CREDIT_CARD_SECURITY_CODE => '1234',
-            \PayUParameters::INSTALLMENTS_NUMBER => 1,
-            \PayUParameters::DEVICE_SESSION_ID => session_id($session),
-            \PayUParameters::PAYMENT_METHOD => 'AMEX',
-            \PayUParameters::PAYER_NAME => 'APPROVED',
-            \PayUParameters::PAYER_DNI => $user->identification,
-            \PayUParameters::REFERENCE_CODE => $order->reference,
-            \PayUParameters::USER_AGENT => 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/53.0.2785.143 Safari/537.36',
-            \PayUParameters::VALUE => $order->value
+            PayUParameters::VALUE => $this->order->value,
+            PayUParameters::DESCRIPTION => 'Payment cc test',
+            PayUParameters::REFERENCE_CODE => $this->order->reference,
+
+            PayUParameters::CURRENCY => 'PEN',
+
+            PayUParameters::PAYMENT_METHOD => 'VISA',
+
+            PayUParameters::CREDIT_CARD_NUMBER => '4907840000000005',
+            PayUParameters::CREDIT_CARD_EXPIRATION_DATE => $creditCard->expirationDate,
+            PayUParameters::CREDIT_CARD_SECURITY_CODE => $this->faker->numberBetween(199,499),
+
+            PayUParameters::INSTALLMENTS_NUMBER => 1,
+
+            PayUParameters::PAYER_NAME => $creditCard->name,
+            PayUParameters::PAYER_DNI => $this->faker->randomNumber(8),
+
+            PayUParameters::DEVICE_SESSION_ID => session_id($session),
+            PayUParameters::IP_ADDRESS => '127.0.0.1',
+            PayUParameters::USER_AGENT => $this->faker->userAgent
         ];
 
-        $order->payWith($data, function($response, $order) {
+        $this->payuClient->pay($data, function($response, $order) {
             if ($response->code == 'SUCCESS') {
-                // ... check transactionResponse object and do what you need
-                $order->update([
-                    'payu_order_id' => $response->transactionResponse->orderId,
-                    'transaction_id' => $response->transactionResponse->transactionId
-                ]);
-
                 $this->assertEquals($response->transactionResponse->state, 'APPROVED');
             } else {
-                //... something went wrong
+                $this->assertTrue(false, print_r($response));
             }
         }, function($error) {
-            // ... handle PayUException, InvalidArgument or another error
+            $this->assertTrue(false, $error->getCode() . ' - ' . $error->getMessage());
         });
-
-        return $order;
     }
 
     public function testCashPayment()
     {
         $this->markTestSkipped('must be revisited.');
-
-        $user = $this->getUser();
-        $order = $this->getOrder();
 
         // Method only used for testing, because cash payments can't use
         // account testing enviroment equals true
@@ -79,17 +121,17 @@ class LaravelPayUTest extends PHPUnit_Framework_TestCase
         $data = [
             \PayUParameters::DESCRIPTION => 'Payment cash test',
             \PayUParameters::IP_ADDRESS => '127.0.0.1',
-            \PayUParameters::CURRENCY => 'COP',
+            \PayUParameters::CURRENCY => 'PEN',
             \PayUParameters::EXPIRATION_DATE => $nextWeek->format('Y-m-d\TH:i:s'),
             \PayUParameters::PAYMENT_METHOD => 'BALOTO',
             \PayUParameters::BUYER_EMAIL => 'buyeremail@test.com',
             \PayUParameters::PAYER_NAME => 'APPROVED',
-            \PayUParameters::PAYER_DNI => $user->identification,
-            \PayUParameters::REFERENCE_CODE => $order->reference,
-            \PayUParameters::VALUE => $order->value
+            \PayUParameters::PAYER_DNI => $this->user->identification,
+            \PayUParameters::REFERENCE_CODE => $this->order->reference,
+            \PayUParameters::VALUE => $this->order->value
         ];
 
-        $order->payWith($data, function($response) {
+        $this->order->payWith($data, function($response) {
             if ($response->code == 'SUCCESS') {
                 // ... check transactionResponse object and do what you need
                 $this->assertEquals($response->transactionResponse->state, 'PENDING');
@@ -108,7 +150,7 @@ class LaravelPayUTest extends PHPUnit_Framework_TestCase
     {
         $this->markTestSkipped('must be revisited.');
 
-        $order->searchById(function($response) {
+        $this->payuClient->searchById(function($response) {
             // ... check response and use the order data to update or something
             $this->assertEquals($response->status, 'CAPTURED');
         }, function($error) {
@@ -123,7 +165,7 @@ class LaravelPayUTest extends PHPUnit_Framework_TestCase
     {
         $this->markTestSkipped('must be revisited.');
 
-        $order->searchByReference(function($response) {
+        $this->payuClient->searchByReference(function($response) {
             // ... check response array list and use the order data to update or something
             $this->assertEquals($response[0]->status, 'CAPTURED');
         }, function($error) {
@@ -138,7 +180,7 @@ class LaravelPayUTest extends PHPUnit_Framework_TestCase
     {
         $this->markTestSkipped('must be revisited.');
 
-        $order->searchByTransaction(function($response) {
+        $this->payuClient->searchByTransaction(function($response) {
             // ... check response array list and use the order data to update or something
             $this->assertEquals($response->state, 'APPROVED');
         }, function($error) {
@@ -161,8 +203,18 @@ class LaravelPayUTest extends PHPUnit_Framework_TestCase
             'payu_order_id' => null,
             'transaction_id' => null,
             'reference' => uniqid(time()),
-            'value' => 20000,
+            'value' => 100,
             'user_id' => 1
         ]);
+    }
+
+    private function getCreditCard()
+    {
+        $creditCard = new CreditCard($this->faker->creditCardDetails);
+        $creditCard->cvv = $this->faker->numberBetween(199, 399);
+        $creditCard->name = 'APPROVED';
+        $creditCard->expirationDate = Carbon::createFromFormat('m/y', $creditCard->expirationDate)->format('Y/m');
+
+        return $creditCard;
     }
 }

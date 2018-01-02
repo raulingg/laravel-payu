@@ -1,6 +1,6 @@
 <?php
 
-namespace Fakes;
+namespace Raulingg\LaravelPayU\Tests\Fakes;
 
 class FakeObject
 {
