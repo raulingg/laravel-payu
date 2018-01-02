@@ -18,19 +18,18 @@ class PayuClient implements PayuClientInterface
     const ON_TESTING = 'isTest';
 
     /**
-     * Undocumented variable
+     * Undocumented variable.
      *
      * @var string
      */
     protected static $accountId;
 
     /**
-     * Undocumented variable
+     * Undocumented variable.
      *
      * @var string
      */
     protected static $country;
-
 
     /**
      * The current currency.
@@ -53,9 +52,7 @@ class PayuClient implements PayuClientInterface
      */
     protected static $formatCurrencyUsing;
 
-
     /**
-     *
      * @param array $environmentParams
      */
     public function __construct($environmentParams)
@@ -63,7 +60,7 @@ class PayuClient implements PayuClientInterface
         static::setEnvironment($environmentParams);
     }
 
-     /**
+    /**
      * Set Payu Environment for the account.
      *
      * @param array $params
@@ -71,7 +68,7 @@ class PayuClient implements PayuClientInterface
      */
     public static function setEnvironment($environmentParams)
     {
-        $environmentParamNames = PayuClient::getEnvironmentParamsNames();
+        $environmentParamNames = self::getEnvironmentParamsNames();
 
         foreach ($environmentParams as $paramName => $paramValue) {
             if (! in_array($paramName, $environmentParamNames)) {
@@ -79,7 +76,7 @@ class PayuClient implements PayuClientInterface
             }
 
             if ($paramName == PayUParameters::ACCOUNT_ID || $paramName == PayUParameters::COUNTRY) {
-                PayuClient::${$paramName} = $paramValue;
+                self::${$paramName} = $paramValue;
             } else {
                 PayU::${$paramName} = $paramValue;
             }
@@ -111,15 +108,14 @@ class PayuClient implements PayuClientInterface
     public static function getEnvironmentParamsNames()
     {
         return [
-            PayuClient::API_KEY,
-            PayuClient::API_LOGIN,
-            PayuClient::MERCHANT_ID,
-            PayuClient::ON_TESTING,
+            self::API_KEY,
+            self::API_LOGIN,
+            self::MERCHANT_ID,
+            self::ON_TESTING,
             PayUParameters::ACCOUNT_ID,
             PayUParameters::COUNTRY,
         ];
     }
-
 
     /**
      * Set the currency to be used when billing users.
@@ -213,7 +209,7 @@ class PayuClient implements PayuClientInterface
         return static::usesCurrencySymbol().$amount;
     }
 
-    /** @inheritDoc */
+    /** {@inheritdoc} */
     public function doPing($onSuccess, $onError)
     {
         try {
@@ -226,7 +222,7 @@ class PayuClient implements PayuClientInterface
         }
     }
 
-    /** @inheritDoc */
+    /** {@inheritdoc} */
     public function pay($params, $onSuccess, $onError)
     {
         $params[PayUParameters::ACCOUNT_ID] = static::$accountId;
@@ -245,7 +241,7 @@ class PayuClient implements PayuClientInterface
         }
     }
 
-    /** @inheritDoc */
+    /** {@inheritdoc} */
     public function authorize($params, $onSuccess, $onError)
     {
         $params[PayUParameters::ACCOUNT_ID] = static::$accountId;
@@ -264,7 +260,7 @@ class PayuClient implements PayuClientInterface
         }
     }
 
-    /** @inheritDoc */
+    /** {@inheritdoc} */
     public function capture($params, $onSuccess, $onError)
     {
         $params[PayUParameters::ACCOUNT_ID] = static::$accountId;
