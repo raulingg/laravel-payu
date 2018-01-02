@@ -2,7 +2,6 @@
 
 namespace Raulingg\LaravelPayU\Contracts;
 
-
 interface PayuClientInterface
 {
     /**
@@ -35,7 +34,7 @@ interface PayuClientInterface
     public function authorize($params, $onSuccess, $onError);
 
     /**
-     * Capture payment data
+     * Capture payment data.
      *
      * @param array $params
      * @param callable $onSuccess
@@ -44,4 +43,3 @@ interface PayuClientInterface
      */
     public function capture($params, $onSuccess, $onError);
 }
-
