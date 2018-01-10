@@ -1,57 +1,60 @@
-# LaravelPayU
+LaravelPayU
+================
 
-## Introducción
+[![Build Status](https://travis-ci.org/raulrqm/laravel-payu.svg?branch=master)](https://travis-ci.org/raulrqm/laravel-payu)
+[![StyleCI](https://styleci.io/repos/115456243/shield?branch=master)](https://styleci.io/repos/115456243)
+
+Introducción
+------------
+
 LaravelPayU provee una interfaz sencilla para utilizar el sdk de PayU en proyectos que tienen como base el framework [*Laravel*](https://laravel.com).
 Este proyecto hace uso del [sdk de Payu](http://developers.payulatam.com/es/sdk/), pero no es un proyecto oficial de PayU.
 
-## Instalación y configuración
+Requerimientos
+------------
+* [php >= 7](http://php.net/)
+* [Laravel >= 5.2 <= 5.5](https://laravel.com)
+
+
+Instalación y configuración
+------------
 
 Instalar el paquete mediante composer:
 
 ```bash
-composer require Raulingg/laravel-payu
+composer require raulrqm/laravel-payu
 ```
 
 Luego incluir el ServiceProvider en el arreglo de providers en *config/app.php*
 
 ```bash
-Raulingg\LaravelPayU\LaravelPayUServiceProvider::class,
+Raulingg\LaravelPayU\PayuClientServiceProvider::class,
 ```
 
-Publicar la configuración para incluir la informacion de la cuenta de PayU:
+Publicar la configuración para incluir la información de la cuenta de PayU:
 
 ```bash
 php artisan vendor:publish 
 ```
 
-
-Incluir la informacion de la cuenta y ajustes en el archivo *.env* ó directamente en
+Incluir la información de la cuenta y ajustes en el archivo *.env* o directamente en
 el archivo de configuración *config/payu.php*
 
 ```bash
-APP_ENV=local
-
 PAYU_ON_TESTING=true
-
 PAYU_MERCHANT_ID=your-merchant-id
-
 PAYU_API_LOGIN=your-api-login
-
 PAYU_API_KEY=your-api-key
-
 PAYU_ACCOUNT_ID=your-account-id
-
 PAYU_COUNTRY=your-country-ref: AR/BR/CO/CL/MX/PA/PE/US
-
-PSE_REDIRECT_URL=your-pse-redirect-url
 ```
 
 ## Uso del API
 
 Esta versión contiene solo una interfaz para pagos únicos y consultas.
-Si necesita usar tokenización y pagos recurrentes debe usar el sdk de PayU directamente.
+Si necesita usar tokenización, pagos en efectivo y pagos recurrentes debe usar el sdk de PayU directamente.
 
-### Ping y Bancos
+### Ping
 
 Para consultar la disponibilidad de la plataforma se puede usar el método doPing en el controlador
 designado:
@@ -61,159 +64,117 @@ designado:
 
 namespace App\Http\Controllers;
 
-use Raulingg\LaravelPayU\LaravelPayU;
+use Raulingg\LaravelPayU\Contracts\PayuClientInterface;
 
 class PaymentsController extends Controller
 {
-    LaravelPayU::doPing(function($response) {
-        $code = $response->code;
-        // ... revisar el codigo de respuesta
-    }, function($error) {
-     // ... Manejo de errores PayUException
-    });
+
+    public function doPing(PayuClientInterface $payuClient)
+    {
+        $payuClient->doPing(function($response) {
+            $code = $response->code;
+            // ... revisar el codigo de respuesta
+        }, function($error) {
+            // ... Manejo de errores PayUException
+        });
+    }
+    
 
 ```
 
-Para consulta de bancos se utiliza el método getPSEBanks que también recibe una función de respuesta
-y una de error:
+### Pagos Únicos
+
+Permite el pago de ordenes generadas de la siguiente manera:
 
 ```php
 <?php
 
 namespace App\Http\Controllers;
 
-use Raulingg\LaravelPayU\LaravelPayU;
+use Raulingg\LaravelPayU\Contracts\PayuClientInterface;
+use PayUParameters;
 
 class PaymentsController extends Controller
 {
-    LaravelPayU::getPSEBanks(function($banks) {
-        //... Usar datos de bancos
-        foreach($banks as $bank) {
-            $bankCode = $bank->pseCode;
-        }
-    }, function($error) {
-        // ... Manejo de errores PayUException, InvalidArgument
-    });
-```
 
-### Pagos Únicos
+    public function pay(PayuClientInterface $payuClient)
+    {
+        // Estos datos son de prueba, estos deben ser asignados según tus requerimientos
+        $data = [
+            PayUParameters::VALUE => request()->input('amount'),
+            PayUParameters::DESCRIPTION => 'Payment cc test',
+            PayUParameters::REFERENCE_CODE => uniqid(time()),
 
-Permite el pago de ordenes generadas a través del uso de un [*trait*](http://php.net/manual/en/language.oop5.traits.php) de la siguiente manera:
+            PayUParameters::CURRENCY => 'PEN',
 
-En el modelo de las ordenes, en este caso Order.php debe incluir:
+            PayUParameters::PAYMENT_METHOD => request()->input('card_type'), // VISA, MASTERCARD, ...
 
-```php
-<?php
+            PayUParameters::CREDIT_CARD_NUMBER => request()->input('card_number') // '4907840000000005',
+            PayUParameters::CREDIT_CARD_EXPIRATION_DATE => request()->input('card_expiration_date'),
+            PayUParameters::CREDIT_CARD_SECURITY_CODE => request()->input('card_security_code'),
 
-namespace App;
+            PayUParameters::INSTALLMENTS_NUMBER => 1,
 
-use Raulingg\LaravelPayU\Payable;
-use Illuminate\Database\Eloquent\Model;
+            PayUParameters::PAYER_NAME => 'APPROVED',
+            PayUParameters::PAYER_DNI => '458784778',
 
-class Order extends Model
-{
-    use Payable;
+            PayUParameters::IP_ADDRESS => '127.0.0.1',
+        ];
 
-    /**
-     * The attributes that are mass assignable.
-     *
-     * @var array
-     */
-    protected $fillable = [
-        'reference', 'payu_order_id',  'transaction_id', 'state', 'value', 'user_id'
-    ];
-}
-
-```
-
-**Nota:** Los campos *reference*, *payu_order_id*, *transaction_id*, son necesarios para realizar
-consultas posteriormente.
-
-Una vez configurado el modelo, en el controlador designado para pagos podemos usar el método *payWith* para hacer la consulta y captura de pago (equivalente a doAuthorizationAndCapture en el sdk):
-
-```php
-<?php
-
-$order = Order::find($id);
-
-$data = [
-    \PayUParameters::DESCRIPTION => 'Payment cc test',
-    \PayUParameters::IP_ADDRESS => '127.0.0.1',
-    \PayUParameters::CURRENCY => 'COP',
-    \PayUParameters::CREDIT_CARD_NUMBER => '378282246310005',
-    \PayUParameters::CREDIT_CARD_EXPIRATION_DATE => '2017/02',
-    \PayUParameters::CREDIT_CARD_SECURITY_CODE => '1234',
-    \PayUParameters::INSTALLMENTS_NUMBER => 1 ...
-];
-
-$order->payWith($data, function($response, $order) {
-    if ($response->code == 'SUCCESS') {
-        $order->update([
-            'payu_order_id' => $response->transactionResponse->orderId,
-            'transaction_id' => $response->transactionResponse->transactionId
-        ]);
-        // ... El resto de acciones sobre la orden
-    } else {
-    //... El código de respuesta no fue exitoso
+        $payuClient->pay($data, function($response) {
+            if ($response->code == 'SUCCESS') {        
+                // ... El código para el caso de éxito
+            } else {
+            //... El código de respuesta no fue exitoso
+            }
+        }, function($error) {
+            // ... Manejo de errores PayUException, InvalidArgument
+        });
     }
-}, function($error) {
-    // ... Manejo de errores PayUException, InvalidArgument
-});
 
 ```
 
-El método *payWith* recibe tres parámetros:
+El método *pay* recibe tres parámetros:
 
-- Los parámetros de pago, usando "\" delante de la clase PayUParameters, para
-poder utilizar la constante, dado que el sdk no usa namespaces y autoloading.
+- Un array con los datos de pago.
 - Una función (closure) que recibe la respuesta de la consulta.
-- Una función (closure) que recibe las Excepciones generadas por validación ó
-errores en el pago.
+- Una función (closure) que recibe las excepciones generadas por validación ó errores en el pago.
 
-También puede usar los métodos *authorizeWith* y *captureWith* para autorización de
+También puede usar los métodos *authorize* y *capture* para autorización de
 pago y captura de la orden, pero recuerde que sólo están disponibles para **Brasíl**.
 
 Ver documentación del [sdk para pagos](http://developers.payulatam.com/es/sdk/payments.html).
 
 ### Consultas
 
-Para las consultas se agrega el trait Searchable en el modelo de la orden asi:
-
-```php
-<?php
-
-namespace App;
-
-use Raulingg\LaravelPayU\Payable;
-use Raulingg\LaravelPayU\Searchable;
-use Illuminate\Database\Eloquent\Model;
-
-class Order extends Model
-{
-    use Payable, Searchable;
-}
-```
-
 Luego en el controlador designado para consultas podemos hacer consultas usando el id asignado por Payu, la referencia dada por nosotros, o el id de la transacción:
 
 ```php
 <?php
 
-$order = Order::find($id);
+use Raulingg\LaravelPayU\Contracts\PayuClientInterface as PayuClient;
 
-$order->searchById(function($response, $order) {
+...
+$payuClient = app()->make(PayuClient::class);
+$payuOrderId = 123;
+
+$payuClient->searchById($payuOrderId, function($response, $order) {
     // ... Usar la información de respuesta
 }, function($error) {
     // ... Manejo de errores PayUException, InvalidArgument
 });
 
-$order->searchByReference(function($response, $order) {
+$payuReferenceCode = "2014-05-06 06:14:19";
+
+$payuClient->searchByReference($payuReferenceCode, function($response) {
     // ... Usar la información de respuesta
 }, function($error) {
     // ... Manejo de errores PayUException, InvalidArgument
 });
 
-$order->searchByTransaction(function($response, $order) {
+$payuTransactionId = '960b1a5d-575d-4bd9-927e-0ffbf5dc4296';
+
+$payuClient->searchByTransaction($payuTransactionId, function($response) {
     // ... Usar la información de respuesta
 }, function($error) {
     // ... Manejo de errores PayUException, InvalidArgument
@@ -221,26 +182,31 @@ $order->searchByTransaction(function($response, $order) {
 
 ```
 
-Los métodos *searchById*, *searchByReference* y *searchByTransaction* reciben dos parámetros:
+Los métodos *searchById*, *searchByReference* y *searchByTransaction* reciben tres parámetros:
 
+- El valor del campo usado como entrada para la búsqueda (OrderId, ReferenceCode, transactionId)
 - Una función (closure) que recibe la respuesta de la consulta.
 - Una función (closure) que recibe las Excepciones generadas por validación ó errores en el pago.
 
 Ver documentación del [sdk de consultas](http://developers.payulatam.com/es/sdk/queries.html).
 
+Pruebas
+------------
 
-## Pruebas
-Instalar las dependencias del paquete.
-Crear un archivo *.env* en la raiz del paquete con la configuración respectiva de pruebas para Colombia, ya que es el único país con los tres métodos de pago disponibles. Ver información en [sitio de PayU](http://developers.payulatam.com/es/sdk/sandbox.html) y luego si ejecutar las pruebas:
+Instalar las dependencias y luego ejecutar las pruebas:
 
 ```bash
-phpunit
+vendor/bin/phpunit
 ```
 
-## Errores y contribuciones
+Se usan por defecto valores de prueba provistos por Payu, para más detalles visita
+[sdk sandbox](http://developers.payulatam.com/es/sdk/sandbox.html)
+
+Errores y contribuciones
+------------
 
 Para un error escribir directamente el problema en github issues o enviarlo
-al correo alejandrogutierrezacosta@gmail.com. Si desea contribuir con el proyecto por favor enviar los ajustes siguiendo la guía de contribuciones:
+al correo relaxedchild@gmail.com. Si desea contribuir con el proyecto por favor enviar los ajustes siguiendo la guía de contribuciones:
 
 - Usar las recomendaciones de estilos [psr-1](http://www.php-fig.org/psr/psr-1/) y [psr-2](http://www.php-fig.org/psr/psr-2/)
 
