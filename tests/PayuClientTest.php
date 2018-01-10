@@ -2,18 +2,19 @@
 namespace Raulingg\LaravelPayU\Tests;
 
 use PayU;
+use Exception;
 use PayUPayments;
 use Carbon\Carbon;
 use PayUCountries;
 use PayUParameters;
 use PHPUnit\Framework\TestCase;
 use Faker\Factory as FakerFactory;
+use Illuminate\Support\Facades\Request;
 use Raulingg\LaravelPayU\Tests\Fakes\User;
-use Raulingg\LaravelPayU\Tests\Fakes\Order;
 use Raulingg\LaravelPayU\Client\PayuClient;
+use Raulingg\LaravelPayU\Tests\Fakes\Order;
 use Raulingg\LaravelPayU\Tests\Fakes\CreditCard;
 use Raulingg\LaravelPayU\Contracts\PayuClientInterface;
-use Illuminate\Support\Facades\Request;
 
 class PayuClientTest extends TestCase
 {
@@ -92,7 +93,7 @@ class PayuClientTest extends TestCase
         $payuOrderId = $this->order->payu_order_id;
 
         $this->payuClient->searchById($payuOrderId, function($order) {
-            $this->assertEquals($order->status, 'CAPTURED');
+            $this->assertContains($order->status, ['CAPTURED', 'IN_PROGRESS']);
         }, function($error) {
             $this->assertTrue(false, $error->getCode() . ' - ' . $error->getMessage());
         });
@@ -107,7 +108,7 @@ class PayuClientTest extends TestCase
         $referenceCode = $this->order->reference_code;
 
         $this->payuClient->searchByReference($referenceCode , function($response) {
-            $this->assertEquals($response[0]->status, 'CAPTURED');
+            $this->assertContains($response[0]->status, ['CAPTURED', 'IN_PROGRESS']);
         }, function($error) {
             $this->assertTrue(false, $error->getCode() . ' - ' . $error->getMessage());
         });
