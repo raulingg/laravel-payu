@@ -1,5 +1,5 @@
 {
-  "name": "Raulingg/laravel-payu",
+  "name": "raulingg/laravel-payu",
   "description": "Una interfaz fluida para Laravel usando el SDK oficial de PayU Perú.",
   "keywords": ["laravel", "payu", "pagos", "payu peru", "payu latam"],
   "license": "MIT",
