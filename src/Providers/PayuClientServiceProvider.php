@@ -5,6 +5,7 @@ namespace Raulingg\LaravelPayU\Providers;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Contracts\Config\Repository;
 use Raulingg\LaravelPayU\Client\PayuClient;
+use Raulingg\LaravelPayU\Contracts\PayuClientInterface;
 
 class PayuClientServiceProvider extends ServiceProvider
 {
@@ -33,7 +34,7 @@ class PayuClientServiceProvider extends ServiceProvider
     public function register()
     {
         $this->mergeConfigs();
-        $this->app->singleton(PayuClient::class, $this->getCreatePayuClientClosure());
+        $this->app->singleton(PayuClientInterface::class, $this->getCreatePayuClientClosure());
     }
 
     /**

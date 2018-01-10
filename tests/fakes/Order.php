@@ -10,7 +10,7 @@ class Order extends FakeObject
     public $payu_order_id = null;
     public $transaction_id = null;
     public $state = 1;
-    public $reference = '';
+    public $reference_code = '';
     public $value = null;
     protected $user_id = null;
 

@@ -4,6 +4,7 @@ namespace Raulingg\LaravelPayU\Client;
 
 use PayU;
 use Exception;
+use PayUReports;
 use PayUPayments;
 use PayUException;
 use PayUParameters;
@@ -232,7 +233,7 @@ class PayuClient implements PayuClientInterface
             $response = PayUPayments::doAuthorizationAndCapture($params);
 
             if ($response) {
-                $onSuccess($response, $this);
+                $onSuccess($response);
             }
         } catch (PayUException $exc) {
             $onError($exc);
@@ -251,7 +252,7 @@ class PayuClient implements PayuClientInterface
             $response = PayUPayments::doAuthorization($params);
 
             if ($response) {
-                $onSuccess($response, $this);
+                $onSuccess($response);
             }
         } catch (PayUException $exc) {
             $onError($exc);
@@ -270,7 +271,55 @@ class PayuClient implements PayuClientInterface
             $response = PayUPayments::doCapture($params);
 
             if (! is_null($response)) {
-                $onSuccess($response, $this);
+                $onSuccess($response);
+            }
+        } catch (PayUException $exc) {
+            $onError($exc);
+        } catch (InvalidArgumentException $exc) {
+            $onError($exc);
+        }
+    }
+
+    /** {@inheritdoc} */
+    public function searchById($payuOrderId, $onSuccess, $onError)
+    {
+        try {
+            $response = PayUReports::getOrderDetail([PayUParameters::ORDER_ID => $payuOrderId]);
+
+            if ($response) {
+                $onSuccess($response);
+            }
+        } catch (PayUException $exc) {
+            $onError($exc);
+        } catch (InvalidArgumentException $exc) {
+            $onError($exc);
+        }
+    }
+
+    /** {@inheritdoc} */
+    public function searchByReference($payuReferenceCode, $onSuccess, $onError)
+    {
+        try {
+            $response = PayUReports::getOrderDetailByReferenceCode([PayUParameters::REFERENCE_CODE => $payuReferenceCode]);
+
+            if ($response) {
+                $onSuccess($response);
+            }
+        } catch (PayUException $exc) {
+            $onError($exc);
+        } catch (InvalidArgumentException $exc) {
+            $onError($exc);
+        }
+    }
+
+    /** {@inheritdoc} */
+    public function searchByTransaction($payuTransactionId, $onSuccess, $onError)
+    {
+        try {
+            $response = PayUReports::getTransactionResponse([PayUParameters::TRANSACTION_ID => $payuTransactionId]);
+
+            if ($response) {
+                $onSuccess($response);
             }
         } catch (PayUException $exc) {
             $onError($exc);

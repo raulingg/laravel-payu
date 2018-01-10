@@ -42,4 +42,31 @@ interface PayuClientInterface
      * @return void
      */
     public function capture($params, $onSuccess, $onError);
+
+    /**
+     * Search an order using the id asigned by PayU.
+     *
+     * @param  callback  $onSuccess
+     * @param  callback  $onError
+     * @return mixed
+     */
+    public function searchById($params, $onSuccess, $onError);
+
+    /**
+     * Search an order using the reference created before attempt                                                     the processing.
+     *
+     * @param  callback  $onSuccess
+     * @param  callback  $onError
+     * @return mixed
+     */
+    public function searchByReference($params, $onSuccess, $onError);
+
+    /**
+     * Search an order using the transactionId asigned by PayU.
+     *
+     * @param  callback  $onSuccess
+     * @param  callback  $onError
+     * @return mixed
+     */
+    public function searchByTransaction($params, $onSuccess, $onError);
 }
