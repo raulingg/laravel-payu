@@ -28,7 +28,7 @@ composer require raulrqm/laravel-payu
 Luego incluir el ServiceProvider en el arreglo de providers en *config/app.php*
 
 ```bash
-Raulingg\LaravelPayU\PayuClientServiceProvider::class,
+Raulingg\LaravelPayU\Providers\PayuClientServiceProvider::class,
 ```
 
 Publicar la configuración para incluir la información de la cuenta de PayU:
