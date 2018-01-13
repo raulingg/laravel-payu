@@ -1,7 +1,7 @@
 LaravelPayU
 ================
 
-[![Build Status](https://travis-ci.org/raulrqm/laravel-payu.svg?branch=master)](https://travis-ci.org/raulrqm/laravel-payu)
+[![Build Status](https://travis-ci.org/raulingg/laravel-payu.svg?branch=master)](https://travis-ci.org/raulingg/laravel-payu)
 [![StyleCI](https://styleci.io/repos/115456243/shield?branch=master)](https://styleci.io/repos/115456243)
 
 Introducción
