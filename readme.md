@@ -22,7 +22,7 @@ Instalación y configuración
 Instalar el paquete mediante composer:
 
 ```bash
-composer require raulrqm/laravel-payu
+composer require raulingg/laravel-payu
 ```
 
 Luego incluir el ServiceProvider en el arreglo de providers en *config/app.php*
